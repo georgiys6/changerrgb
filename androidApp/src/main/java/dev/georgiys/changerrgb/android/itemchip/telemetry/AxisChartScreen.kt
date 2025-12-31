@@ -19,6 +19,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import dev.georgiys.changerrgb.data.data.list.CO2ppmItemList
+import dev.georgiys.changerrgb.data.data.list.HumidityItemList
 import dev.georgiys.changerrgb.data.data.list.TemperatureItemList
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -47,17 +49,17 @@ fun AxisChartScreen(
                 extras { it[BottomAxisLabelKey] = map.keys.toList() }
             }
             else if (state.typeDevice == "Humidity"){
-                val list = state.points.map { Json.decodeFromJsonElement<TemperatureItemList>(it) }
+                val list = state.points.map { Json.decodeFromJsonElement<HumidityItemList>(it) }
                 val map: Map<String, Double> = list.associate {
-                    it.time to it.temperature
+                    it.time to it.humidity
                 }
                 columnSeries { series(map.values) }
                 extras { it[BottomAxisLabelKey] = map.keys.toList() }
             }
             else if (state.typeDevice == "CO2ppm"){
-                val list = state.points.map { Json.decodeFromJsonElement<TemperatureItemList>(it) }
+                val list = state.points.map { Json.decodeFromJsonElement<CO2ppmItemList>(it) }
                 val map: Map<String, Double> = list.associate {
-                    it.time to it.temperature
+                    it.time to it.cO2ppm
                 }
                 columnSeries { series(map.values) }
                 extras { it[BottomAxisLabelKey] = map.keys.toList() }
