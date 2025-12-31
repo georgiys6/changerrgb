@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "changerrgb"
 include(":androidApp")
 include(":shared")
+include(":common")

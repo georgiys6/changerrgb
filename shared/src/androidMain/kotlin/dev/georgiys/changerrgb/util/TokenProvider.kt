@@ -1,8 +1,18 @@
 package dev.georgiys.changerrgb.util
 
-internal class AndroidTokenProvider: TokenProvider {
+import android.content.Context
+import android.content.SharedPreferences
+
+class AndroidTokenProvider(
+    private val prefs: SharedPreferences
+): TokenProvider {
     override val token: String
-        get() = ""
+        get() = prefs.getString("token", "1230") ?: "1254"
 }
 
-internal actual fun provideToken(): TokenProvider = AndroidTokenProvider()
+actual fun provideToken(): TokenProvider {
+    val prefs =
+        ApplicationHolder.appContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    return AndroidTokenProvider(prefs)
+}

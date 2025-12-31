@@ -11,9 +11,18 @@ interface Destination{
 
 object Home: Destination{
     override val title: String
-        get() = "ChangerRGB"
+        get() = "SmartHome"
     override val route: String
         get() = "home"
+    override val routeWithArgs: String
+        get() = route
+}
+
+object Settings: Destination{
+    override val title: String
+        get() = "ChangerRGB"
+    override val route: String
+        get() = Settings.javaClass.name.lowercase()
     override val routeWithArgs: String
         get() = route
 }
@@ -31,3 +40,5 @@ object Detail: Destination{
 }
 
 val changerDestinations = listOf(Home)
+
+

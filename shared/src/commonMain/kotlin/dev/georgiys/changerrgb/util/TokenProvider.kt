@@ -1,7 +1,7 @@
 package dev.georgiys.changerrgb.util
 
-internal interface TokenProvider {
+interface TokenProvider {
     val token: String
 }
 
-internal expect fun provideToken(): TokenProvider
+expect fun provideToken(): TokenProvider

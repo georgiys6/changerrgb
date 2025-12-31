@@ -1,83 +1,59 @@
 package dev.georgiys.changerrgb.android.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.georgiys.changerrgb.data.remote.Device
+import dev.georgiys.changerrgb.android.home.viewstate.HomeScreenState
+import dev.georgiys.changerrgb.data.data.Device
 import dev.georgiys.changerrgb.domain.usecase.GetConnectUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetDeviceListUseCase
-import kotlinx.coroutines.async
+import dev.georgiys.changerrgb.domain.usecase.GetDeviceStateUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 
-class HomeViewModel(
+internal class HomeViewModel(
+    private val savedStateHandle: SavedStateHandle,
     val getConnectUseCase: GetConnectUseCase,
-    val getDeviceListUseCase: GetDeviceListUseCase
+    val getDeviceListUseCase: GetDeviceListUseCase,
+    val getDeviceStateUseCase: GetDeviceStateUseCase
 ): ViewModel() {
-    var uiState by mutableStateOf(HomeScreenState())
-    private val _isSuccess = MutableStateFlow(uiState.isConnect)
-    val isSuccess: StateFlow<Boolean> = _isSuccess.asStateFlow()
+    private val _uiState = MutableStateFlow(HomeScreenState())
+    val uiState: StateFlow<HomeScreenState> = _uiState.asStateFlow()
 
-    fun resetSuccess() {
-        _isSuccess.value = false
-    }
+    private val _event = MutableSharedFlow<HomeUiEvent>()
+    val event = _event.asSharedFlow()
 
-    fun fakeGetConnect() {
-        if (uiState.loading) return
-
+    fun onDeviceClicked(device: Device) {
         viewModelScope.launch {
-            uiState = uiState.copy(
-                loading = true,
-                refreshing = true
-            )
-
-            try {
-                val resultGetConnect = true
-
-                uiState = uiState.copy(
-                    loading = false,
-                    refreshing = false,
-                    isConnect = true,
-                    loadFinished = resultGetConnect,
-                )
-
-            } catch (error: Throwable) {
-                uiState = uiState.copy(
-                    loading = false,
-                    refreshing = false,
-                    isConnect = false,
-                    loadFinished = true,
-                    errorMessage = "Could not connect: ${error.localizedMessage}"
-                )
-            }
-            finally {
-                _isSuccess.value = true
-            }
+            _event.emit(HomeUiEvent.OpenItemChip(device.typeDevice, device.chipId))
         }
     }
+
     fun getConnect(){
-        if (uiState.loading) return
+        if (_uiState.value.loading) return
 
         viewModelScope.launch {
-            uiState = uiState.copy(
+            _uiState.value = _uiState.value.copy(
                 loading = true
             )
 
             try {
                 val resultGetConnect = getConnectUseCase()
-                uiState = uiState.copy(
+                _uiState.value = _uiState.value.copy(
                     loading = false,
                     refreshing = false,
                     loadFinished = resultGetConnect,
                 )
 
             } catch (error: Throwable){
-                uiState = uiState.copy(
+                _uiState.value = _uiState.value.copy(
                     loading = false,
                     refreshing = false,
                     loadFinished = true,
@@ -87,75 +63,52 @@ class HomeViewModel(
         }
     }
 
-    fun getDeviceList(){
-        if (uiState.loading) return
+    fun getDeviceList() {
+        if (_uiState.value.loading) return
 
-        viewModelScope.async<List<Device>> {
-            awaitGetDeviceList()
-        }
-    }
-
-    fun getFakeDeviceList(){
-        if (uiState.loading) return
-
-        viewModelScope.async<List<Device>> {
-            awaitFakeGetDeviceList()
-        }
-    }
-
-    private suspend fun awaitFakeGetDeviceList(): List<Device>{
-        var deviceList: List<Device>
-        uiState = uiState.copy(
-            loading = true
-        )
-        try {
-//            deviceList = getDeviceListUseCase()
-            deviceList = listOf(
-                Device(
-                    chipId = 1,
-                    typeDevice = "Telemetry",
-                    deviceName = "Тестовый"
-//                    uuid = 1,
-//                    type = "Shit",
-//                    temperature = 37.7,
-//                    humidity = 451.1,
-//                    isSensor = false,
-//                    co2ppm = 696
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    loading = true,
+                    errorMessage = null
                 )
-            )
-            uiState = uiState.copy(
-                loading = false,
-                refreshing = false,
-                deviceList = deviceList
-            )
-            deviceList
-        } catch (error: Throwable){
-            uiState = uiState.copy(
-                loading = false,
-                refreshing = false,
-                loadFinished = true,
-                deviceList = listOf(),
-                errorMessage = "Could not connect: ${error.localizedMessage}"
-            )
-            deviceList = listOf<Device>()
+            }
+
+            try {
+                val deviceList = getDeviceListUseCase()
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        refreshing = false,
+                        deviceList = deviceList
+                    )
+                }
+            } catch (error: Throwable) {
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        refreshing = false,
+                        errorMessage = "Could not connect: ${error.localizedMessage}"
+                    )
+                }
+            }
         }
-        return deviceList
     }
 
     private suspend fun awaitGetDeviceList(): List<Device>{
         var deviceList: List<Device>
-        uiState = uiState.copy(
+        _uiState.value = _uiState.value.copy(
             loading = true
         )
         try {
             deviceList = getDeviceListUseCase()
-            uiState = uiState.copy(
+            _uiState.value = _uiState.value.copy(
                 loading = false,
                 refreshing = false,
                 deviceList = deviceList,
             )
         } catch (error: Throwable){
-            uiState = uiState.copy(
+            _uiState.value = _uiState.value.copy(
                 loading = false,
                 refreshing = false,
                 loadFinished = true,
@@ -166,12 +119,3 @@ class HomeViewModel(
         return deviceList
     }
 }
-
-data class HomeScreenState(
-    var loading: Boolean = false,
-    var refreshing: Boolean = false,
-    var isConnect: Boolean = false,
-    var errorMessage: String? = null,
-    var loadFinished: Boolean = false,
-    val deviceList: List<Device> = listOf<Device>()
-)
