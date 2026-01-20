@@ -22,17 +22,22 @@ fun MyApplicationTheme(
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = Dark4,
-//            primaryVariant = Dark3,
+            primary = Red, // Используем Red как акцентный цвет, чтобы его было видно
+            onPrimary = Color.White,
             secondary = Red,
+            onSecondary = Color.White,
             surface = Dark2,
-            tertiary = Dark3,
-            background = Dark1
+            onSurface = Color.White,
+            tertiary = Color(0xFFBB86FC), // Светло-фиолетовый для контраста
+            background = Dark1,
+            onBackground = Color.White
         )
     } else {
         lightColorScheme(
             primary = Color(0xFF6200EE),
+            onPrimary = Color.White,
             secondary = Color(0xFF03DAC5),
+            onSecondary = Color.Black,
             tertiary = Color(0xFF3700B3)
         )
     }
