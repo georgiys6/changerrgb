@@ -28,7 +28,6 @@ fun TelemetryScreen(
         InfoCard(
             modifier = Modifier.weight(1f),
             indicatorColor = Color(0xFFFF4D4D),
-            backgroundColor = Color(0xFFFFE3E3),
             icon = Icons.Filled.DeviceThermostat,
             onClick = onAxisClick,
             chipId = telemetry?.chipId ?: -1,
@@ -40,7 +39,6 @@ fun TelemetryScreen(
         InfoCard(
             modifier = Modifier.weight(1f),
             indicatorColor = Color(0xFF2196F3),
-            backgroundColor = Color(0xFFE3F5FF),
             icon = Icons.Filled.WaterDrop,
             onClick = onAxisClick,
             chipId = telemetry?.chipId ?: -1,
@@ -52,7 +50,6 @@ fun TelemetryScreen(
         InfoCard(
             modifier = Modifier.weight(1f),
             indicatorColor = Color(0xFF4CAF50),
-            backgroundColor = Color(0xFFE9FFE3),
             icon = Icons.Filled.Cloud,
             onClick = onAxisClick,
             chipId = telemetry?.chipId ?: -1,

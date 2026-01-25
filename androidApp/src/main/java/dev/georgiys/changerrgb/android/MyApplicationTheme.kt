@@ -22,25 +22,33 @@ fun MyApplicationTheme(
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = Red, // Используем Red как акцентный цвет, чтобы его было видно
+            primary = Red,
             onPrimary = Color.White,
-            secondary = Red,
-            onSecondary = Color.White,
+
+            background = Dark1,
+            onBackground = Color.White,
+
             surface = Dark2,
             onSurface = Color.White,
-            tertiary = Color(0xFFBB86FC), // Светло-фиолетовый для контраста
-            background = Dark1,
-            onBackground = Color.White
+
+            surfaceVariant = Dark3,
+            onSurfaceVariant = Color(0xFFCAC4D0),
+
+            error = Red,
+            onError = Color.Black,
+
+            errorContainer = Color(0xFF4A0C0C),
+            onErrorContainer = Color(0xFFFFB4AB),
+
+            surfaceContainerLowest = Dark1,
+            surfaceContainerLow = Dark2,
+            surfaceContainer = Dark3,
+            surfaceContainerHigh = Dark4,
         )
     } else {
-        lightColorScheme(
-            primary = Color(0xFF6200EE),
-            onPrimary = Color.White,
-            secondary = Color(0xFF03DAC5),
-            onSecondary = Color.Black,
-            tertiary = Color(0xFF3700B3)
-        )
+        LightColors
     }
+
     val typography = Typography(
         bodyMedium = TextStyle(
             fontFamily = FontFamily.Default,
@@ -61,6 +69,30 @@ fun MyApplicationTheme(
         content = content
     )
 }
+
+val LightColors = lightColorScheme(
+    primary = Color(0xFF6200EE),
+    onPrimary = Color.White,
+
+    secondary = Color(0xFF03DAC5),
+    onSecondary = Color.Black,
+
+    background = Color(0xFFFFFBFE),
+    onBackground = Color(0xFF1C1B1F),
+
+    surface = Color(0xFFFFFBFE),
+    onSurface = Color(0xFF1C1B1F),
+
+    error = Color(0xFFB3261E),
+    onError = Color.White,
+
+    errorContainer = Color(0xFFF9DEDC),
+    onErrorContainer = Color(0xFF410E0B),
+
+    surfaceVariant = Color(0xFFE7E0EC),
+    onSurfaceVariant = Color(0xFF49454F),
+)
+
 
 val Dark1 = Color(red = 22, green = 23, blue = 29)
 val Dark2 = Color(red = 28, green = 29, blue = 35)

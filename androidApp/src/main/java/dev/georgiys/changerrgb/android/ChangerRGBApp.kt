@@ -145,7 +145,6 @@ fun ChangerRGBApp() {
 
                 HomeScreen(
                     uiState = uiState,
-                    getConnect = homeViewModel::getConnect,
                     getDeviceList = homeViewModel::getDeviceList,
                     onDeviceClick = homeViewModel::onDeviceClicked
                 )

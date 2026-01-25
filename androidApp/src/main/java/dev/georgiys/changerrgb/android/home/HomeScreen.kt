@@ -25,7 +25,6 @@ import dev.georgiys.changerrgb.data.data.Device
 fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeScreenState,
-    getConnect: () -> Unit,
     getDeviceList: () -> Unit,
     onDeviceClick: (Device) -> Unit
 ) {
