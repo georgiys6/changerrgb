@@ -28,5 +28,7 @@ data class Command(
     @SerialName("SensorType")
     val sensorType: String? = "",
     @SerialName("HoursBack")
-    val hoursBack: Int? = 12
+    val hoursBack: Int? = 12,
+    @SerialName("NewName")
+    val newName: String? = ""
 )

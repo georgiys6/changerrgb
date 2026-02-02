@@ -8,7 +8,7 @@ import dev.georgiys.changerrgb.data.data.LedController
 import dev.georgiys.changerrgb.data.data.Response
 import dev.georgiys.changerrgb.data.data.StateListResponse
 import dev.georgiys.changerrgb.data.data.StateResponse
-import dev.georgiys.changerrgb.data.data.Telemetry
+import dev.georgiys.changerrgb.data.data.github.GithubRelease
 import dev.georgiys.changerrgb.util.BaseUrlProvider
 import dev.georgiys.changerrgb.util.TokenProvider
 import io.ktor.client.call.body
@@ -146,5 +146,31 @@ internal class ChangerService(
                 )
             )
         }.body()
+    }
+
+    suspend fun setNewChipName(chipId: Long, chipName: String): Response{
+        return client.post {
+            pathUrl("smarthome/Admin")
+            contentType(ContentType.Application.Json)
+            setBody(
+                Command(
+                    chipId = chipId,
+                    newName = chipName,
+                    typeMesseage = "UpdateNameController",
+                    token = tokenProvider.token
+                )
+            )
+        }.body()
+    }
+
+    suspend fun getReleases(): List<GithubRelease> {
+        return client.get("https://api.github.com/repos/georgiys6/ChangerRGB/releases") {
+            contentType(ContentType.Application.Json)
+        }.body()
+    }
+
+    //https://github.com/georgiys6/changerrgb/releases/download/1.0/androidApp-release.apk
+    suspend fun downloadApk(url: String): ByteArray {
+        return client.get(url).body<ByteArray>()
     }
 }

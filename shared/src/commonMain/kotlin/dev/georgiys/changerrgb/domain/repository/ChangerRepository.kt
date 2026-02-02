@@ -7,7 +7,7 @@ import dev.georgiys.changerrgb.data.data.LedController
 import dev.georgiys.changerrgb.data.data.Response
 import dev.georgiys.changerrgb.data.data.StateListResponse
 import dev.georgiys.changerrgb.data.data.StateResponse
-import dev.georgiys.changerrgb.data.data.Telemetry
+import dev.georgiys.changerrgb.data.data.github.GithubRelease
 
 internal interface ChangerRepository {
     suspend fun getConnect(): Boolean
@@ -18,4 +18,7 @@ internal interface ChangerRepository {
     suspend fun setSpeedToLed(ledController: LedController): Response
     suspend fun setBrightnessToLed(ledController: LedController): Response
     suspend fun getDataFromDB(chipId: Long, typeDevice: String): StateListResponse
+    suspend fun setNewChipName(chipId: Long, chipName: String): Response
+    suspend fun getReleases(): List<GithubRelease>
+    suspend fun downloadApk(url: String): ByteArray
 }

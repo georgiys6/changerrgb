@@ -7,6 +7,7 @@ import dev.georgiys.changerrgb.android.itemchip.ItemChipViewModel
 import dev.georgiys.changerrgb.android.itemchip.telemetry.AxisViewModel
 import dev.georgiys.changerrgb.android.settings.KeyValueStorageAndroid
 import dev.georgiys.changerrgb.android.settings.SettingsViewModel
+import dev.georgiys.changerrgb.android.util.ApkInstaller
 import dev.georgiys.changerrgb.settings.KeyValueStorage
 import dev.georgiys.changerrgb.util.AndroidBaseUrlProvider
 import dev.georgiys.changerrgb.util.BaseUrlProvider
@@ -16,8 +17,9 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel{
-        HomeViewModel(get())
+        HomeViewModel(get(), get(), get(), get())
     }
+    single { ApkInstaller(get()) }
 
     viewModel{
         SettingsViewModel(get(),get(),get(), get())
@@ -29,7 +31,7 @@ val appModule = module {
             setStateToLedUseCase = get(),
             setSpeedToLedUseCase = get(),
             setBrightnessToLedUseCase = get(),
-            getDataFromDBUseCase = get(),
+            setNewChipNameUseCase = get(),
             savedStateHandle = get()
         )
     }

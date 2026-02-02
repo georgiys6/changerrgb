@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dev.georgiys.changerrgb.android.home.HomeUiEvent
 import dev.georgiys.changerrgb.android.itemchip.viewstate.ItemChipScreenState
 import dev.georgiys.changerrgb.data.data.LedController
-import dev.georgiys.changerrgb.domain.usecase.GetDataFromDBUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetDeviceStateUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetBrightnessToLedUseCase
+import dev.georgiys.changerrgb.domain.usecase.SetNewChipNameUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetSpeedToLedUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetStateToLedUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,14 +19,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
-import kotlin.collections.listOf
 
 class ItemChipViewModel(
     private val getDeviceStateUseCase: GetDeviceStateUseCase,
     private val setStateToLedUseCase: SetStateToLedUseCase,
     private val setSpeedToLedUseCase: SetSpeedToLedUseCase,
     private val setBrightnessToLedUseCase: SetBrightnessToLedUseCase,
-    private val getDataFromDBUseCase: GetDataFromDBUseCase,
+    private val setNewChipNameUseCase : SetNewChipNameUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -38,11 +37,16 @@ class ItemChipViewModel(
         savedStateHandle.get<String>("chipType")
             ?: error("chipType is required")
 
+    private val chipName: String =
+        savedStateHandle.get<String>("chipName")
+            ?: error("chipName is required")
+
     private val _uiState = MutableStateFlow(
         ItemChipScreenState(
             loading = true,
             chipId = chipId,
-            type = chipType
+            type = chipType,
+            chipName = chipName
         )
     )
     val uiState: StateFlow<ItemChipScreenState> = _uiState
@@ -54,21 +58,31 @@ class ItemChipViewModel(
         load()
     }
 
+    fun updateChipName(newName: String) {
+        _uiState.update { it.copy(chipName = newName) }
+    }
+
     fun onAxisClick(chipId: Long, typeDevice: String) {
         viewModelScope.launch {
             _event.emit(HomeUiEvent.OpenItemAxis(chipId, typeDevice))
         }
     }
 
-    fun initAxis(chipId: Long, typeDevice: String){
+    fun setNewChipName(){
         viewModelScope.launch {
             try {
-                val response = getDataFromDBUseCase(chipId, typeDevice)
-                _uiState.update {
-                    it.copy(
-                        loading = false,
-                        axis = response.response
-                    )
+                val response = setNewChipNameUseCase(
+                    _uiState.value.chipId,
+                    _uiState.value.chipName
+                )
+                if (response.status == "success") {
+                    _uiState.update {
+                        it.copy(
+                            loading = false,
+                        )
+                    }
+                } else {
+                    throw Exception()
                 }
             } catch (error: Exception) {
                 _uiState.update {

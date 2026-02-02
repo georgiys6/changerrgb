@@ -6,15 +6,18 @@ import dev.georgiys.changerrgb.data.repository.ChangerRepositoryImpl
 import dev.georgiys.changerrgb.data.repository.SettingsRepositoryImpl
 import dev.georgiys.changerrgb.domain.repository.ChangerRepository
 import dev.georgiys.changerrgb.domain.repository.SettingsRepository
+import dev.georgiys.changerrgb.domain.usecase.DownloadApkUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetAuthorisationUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetConnectUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetDataFromDBUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetDeviceListUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetDeviceStateUseCase
+import dev.georgiys.changerrgb.domain.usecase.GetReleasesUseCase
 import dev.georgiys.changerrgb.domain.usecase.GetSettingsUseCase
 import dev.georgiys.changerrgb.domain.usecase.SaveSettingsUseCase
 import dev.georgiys.changerrgb.domain.usecase.SaveTokenUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetBrightnessToLedUseCase
+import dev.georgiys.changerrgb.domain.usecase.SetNewChipNameUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetSpeedToLedUseCase
 import dev.georgiys.changerrgb.domain.usecase.SetStateToLedUseCase
 import dev.georgiys.changerrgb.util.provideBaseUrl
@@ -39,14 +42,17 @@ private val domainModule = module {
     factory { GetConnectUseCase() }
     factory { GetDeviceListUseCase() }
     factory { GetDeviceStateUseCase() }
+    factory { GetReleasesUseCase() }
     factory { SetStateToLedUseCase() }
     factory { GetDataFromDBUseCase() }
     factory { SetSpeedToLedUseCase() }
     factory { SetBrightnessToLedUseCase() }
+    factory { SetNewChipNameUseCase() }
     factory { GetSettingsUseCase(get()) }
     factory { SaveSettingsUseCase(get()) }
     factory { SaveTokenUseCase(get()) }
     factory { GetAuthorisationUseCase() }
+    factory { DownloadApkUseCase() }
 }
 
 private val sharedModules = listOf(dataModule, utilityModule, domainModule)

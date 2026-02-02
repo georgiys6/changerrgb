@@ -38,7 +38,7 @@ import dev.georgiys.changerrgb.android.settings.SettingsScreen
 import dev.georgiys.changerrgb.android.settings.SettingsViewModel
 import org.koin.androidx.compose.koinViewModel
 
-const val ITEM_CHIP_ROUTE = "item_chip/{chipType}/{chipId}"
+const val ITEM_CHIP_ROUTE = "item_chip/{chipType}/{chipId}/{chipName}"
 
 @Composable
 fun ChangerRGBApp() {
@@ -134,7 +134,7 @@ fun ChangerRGBApp() {
                     homeViewModel.event.collect { event ->
                         when (event) {
                             is HomeUiEvent.OpenItemChip -> {
-                                navController.navigate("item_chip/${event.chipType}/${event.chipId}")
+                                navController.navigate("item_chip/${event.chipType}/${event.chipId}/${event.chipName}")
                             }
                             is HomeUiEvent.OpenItemAxis -> {
                                 navController.navigate("axis")
@@ -146,7 +146,9 @@ fun ChangerRGBApp() {
                 HomeScreen(
                     uiState = uiState,
                     getDeviceList = homeViewModel::getDeviceList,
-                    onDeviceClick = homeViewModel::onDeviceClicked
+                    onDeviceClick = homeViewModel::onDeviceClicked,
+                    getReleases = homeViewModel::getReleases,
+                    getNewApp = homeViewModel::updateApp
                 )
             }
 
@@ -157,7 +159,8 @@ fun ChangerRGBApp() {
                 route = ITEM_CHIP_ROUTE,
                 arguments = listOf(
                     navArgument("chipType") { type = NavType.StringType },
-                    navArgument("chipId") { type = NavType.LongType }
+                    navArgument("chipId") { type = NavType.LongType },
+                    navArgument("chipName") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
                 val itemChipViewModel: ItemChipViewModel =
@@ -168,6 +171,8 @@ fun ChangerRGBApp() {
                     itemChipViewModel::setStateToLed,
                     itemChipViewModel::setSpeedToLed,
                     itemChipViewModel::setBrightnessToLed,
+                    itemChipViewModel::setNewChipName,
+                    itemChipViewModel::updateChipName,
                     itemChipViewModel::onAxisClick
                 )
                 LaunchedEffect(Unit) {
